@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2023-03-18
+## [0.2.0] - '2023-03-17'
+### Added 
+    - Diffuser class to allow image generation based on prompts
+    - Passing CFG and steps arguments to diffuser to allow some user control over output
+    - Set torch precision to 16bit from 32bit to allow for more efficient testing on a local machine
+    - Turned on sliced attention to allow for more efficient testing
+## [0.1.0] - '2023-03-16'
 ### Added
     - This changelog, MIT License, and project scaffolding like Makefile, pyproject.toml, setup.cfg
     - Bot module to capture all functionality pertaining to interacting with discord.

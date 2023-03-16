@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stable_discord"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Dan Kleeman <dan.kleeman.git@pm.me>"]
 readme = "README.md"
@@ -9,6 +9,10 @@ packages = [{include = "stable_discord"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 discord-py = "^2.2.2"
+diffusers = "^0.14.0"
+transformers = "^4.27.1"
+torch = "^2.0.0"
+accelerate = "^0.17.1"
 
 
 [tool.poetry.group.dev.dependencies]
