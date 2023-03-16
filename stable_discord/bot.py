@@ -3,8 +3,8 @@ import os
 
 import discord
 
-from stable_discord.parser import PromptParser
 from stable_discord.diffuser import BaseDiffuser
+from stable_discord.parser import PromptParser
 
 logger = logging.getLogger(__name__)
 
