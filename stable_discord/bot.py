@@ -10,10 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class StableDiscordBot(discord.Client):
-    """An exmaple discord client implementation that joins a Discord server and parses arguments.
-
-    Currently, this is a simple example for testing and development. Will be removed."""
-
     # TODO: Standardize emojis
     ack_emoji = "\N{THUMBS UP SIGN}"
     in_prog_emoji = "\N{STOPWATCH}"
