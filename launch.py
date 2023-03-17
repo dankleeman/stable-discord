@@ -14,4 +14,4 @@ if __name__ == "__main__":
     logger.setLevel(args.pop("logging_level"))
 
     bot = StableDiscordBot()
-    bot.run(config['auth']['discord_token'])
+    bot.run(config["auth"]["discord_token"])
