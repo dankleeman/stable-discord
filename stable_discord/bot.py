@@ -29,7 +29,7 @@ class StableDiscordBot(discord.Client):
         self.wake_word = wake_word
         self.seen_channels = []
         self.prompt_parser = PromptParser()
-        self.diffuser = Diffuser
+        self.diffuser = Diffuser()
 
     def clean_message(self, user_input: str) -> str:
         """A short helper function that cleans a user message. Here, clean means removing the "wake word" and stripping
