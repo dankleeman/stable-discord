@@ -1,4 +1,5 @@
 import logging
+import random
 
 import torch
 from diffusers import StableDiffusionPipeline
@@ -20,7 +21,7 @@ class Diffuser:  # pylint: disable=too-few-public-methods
         self.pipeline = StableDiffusionPipeline.from_pretrained(model_name)
         self.pipeline.to("cuda")
 
-    def make_image(self, prompt: str, cfg: float, steps: int) -> None:
+    def make_image(self, prompt: str, cfg: float, steps: int) -> str:
         """Call the huggingface pipeline with several arguments and save the resulting image to disk as "img.png"
 
         Args:
@@ -28,7 +29,11 @@ class Diffuser:  # pylint: disable=too-few-public-methods
             cfg (float): The float indicating the strength for "context free guidance".
             steps (int): The number of diffusion steps to perform.
 
+        Return:
+            str: The file_name string
         """
 
         image = self.pipeline(prompt=prompt, guidance_scale=cfg, num_inference_steps=steps).images[0]
-        image.save("img.png")
+        file_name = f"output_images/img_{random.randint(1, 10**10)}.png"
+        image.save(file_name)
+        return file_name
