@@ -19,6 +19,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Check Config Discord Token
+        run: if ! grep 'discord_token="XXXX"' config.toml; then exit 1; fi
+
       - name: Install Poetry
         uses: snok/install-poetry@v1
 
