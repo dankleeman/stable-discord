@@ -3,5 +3,11 @@ title = "StableDiscord Configuration"
 [auth]
 discord_token="XXX"
 
+[discord_settings]
+# Set channels that the bot listens and responds on. Specify in case-sensitive "server:channel" format
+# If both are set, only listen_channels is used. If neither are set, the bot will listen on all channels it is invited.
+ listen_channels=[]
+ ignore_channels=[]
+
 [misc_settings]
 log_dir="logs"
