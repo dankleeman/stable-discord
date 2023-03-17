@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Check Config Discord Token
-        run: if ! grep 'discord_token="XXXX"' config.toml; then exit 1; fi
+        run: if ! grep 'discord_token="XXX"' config.toml; then exit 1; fi
   build:
     runs-on: ubuntu-latest
     steps:
