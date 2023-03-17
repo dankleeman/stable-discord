@@ -1,4 +1,5 @@
 import argparse
+import os
 
 from stable_discord import bot, utils
 
@@ -11,4 +12,5 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     logger.setLevel(args.pop("logging_level"))
 
-    bot.launch_bot(bot.StableDiscordBot)
+    bot_client = bot.StableDiscordBot()
+    bot_client.run(os.getenv("DISCORD_TOKEN"))

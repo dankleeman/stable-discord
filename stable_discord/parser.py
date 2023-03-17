@@ -1,15 +1,15 @@
 import argparse
 import logging
 import shlex
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
 class PromptParser:
-    # TODO: Standardize emojis
-    ack_emoji = "\N{THUMBS UP SIGN}"
-    in_prog_emoji = "\N{STOPWATCH}"
-    done_emoji = "✔"
+    """A wrapper class that utilizes the argparse ArgumentParser to parse a string of input into the arguments
+    that can be consumed by a stable diffusion model.
+    """
 
     def __init__(self):
         self.parser = argparse.ArgumentParser(prog="StableDiscord", add_help=False)
@@ -41,12 +41,27 @@ class PromptParser:
         )
 
     @property
-    def help_text(self):
+    def help_text(self) -> str:
+        """Generate the help text for the argument parser.
+
+        Returns:
+            str: The help text to explain what arguments are understood and what they do.
+        """
         return self.parser.format_help()
 
-    def parse_prompt(self, prompt):
-        logger.debug("Parsing args from: %s", prompt)
-        known_args, unknown_args = self.parser.parse_known_args(shlex.split(prompt))
+    def parse_prompt(self, user_input: str) -> tuple[dict[str, Any], str]:
+        """
+
+        Args:
+            user_input: The string of input that needs to be parsed
+
+        Returns:
+            known_args: A dict of the correctly parsed arguments.
+            unknown_args: A string of all the arguments that were not correctly parsed. This may be useful for
+                user feedback or logging.
+        """
+        logger.debug("Parsing args from: %s", user_input)
+        known_args, unknown_args = self.parser.parse_known_args(shlex.split(user_input))
         known_args = vars(known_args)
 
         known_args["prompt"] = " ".join(known_args["prompt"])

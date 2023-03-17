@@ -1,5 +1,4 @@
 import logging
-import os
 
 import discord
 
@@ -9,28 +8,55 @@ from stable_discord.parser import PromptParser
 logger = logging.getLogger(__name__)
 
 
-# TODO: Look into unblocking some of these steps: https://stackoverflow.com/questions/65881761/discord-gateway-warning-shard-id-none-heartbeat-blocked-for-more-than-10-second
 class StableDiscordBot(discord.Client):
-    # TODO: Standardize emojis
-    ack_emoji = "\N{THUMBS UP SIGN}"
-    in_prog_emoji = "\N{STOPWATCH}"
-    done_emoji = "💯"  # TODO: Pick a check mark that shows up green on discord
-    prompt_parser = PromptParser()
-    diffuser = Diffuser()
+    """A class that handles interacting with the users on discord and coordinating between the different parts
+    of the stable-discord system"""
 
-    def __init__(self, wake_word="/art", *, intents, **options):
-        super().__init__(intents=intents, **options)
+    ack_emoji: str = "\N{THUMBS UP SIGN}"
+    in_prog_emoji: str = "\N{STOPWATCH}"
+    done_emoji: str = "💯"
+    prompt_parser: PromptParser = PromptParser()
+    diffuser: Diffuser = Diffuser()
+    discord_token: str
+
+    def __init__(self, wake_word: str = "/art"):
+        intents = discord.Intents(value=68608)
+        intents.message_content = True
+        intents.messages = True
+        intents.guilds = True
+
+        super().__init__(intents=intents)
         self.wake_word = wake_word
         self.seen_channels = []
 
-    def clean_message(self, s):
-        return s.lstrip().replace(self.wake_word, "")
+    def clean_message(self, user_input: str) -> str:
+        """A short helper function that cleans a user message. Here, clean means removing the "wake word" and stripping
+            away leading whitespace.
 
-    async def help_response(self, message):
+        Args:
+            user_input: The raw user message.
+
+        Returns:
+            str: The cleaned user message.
+        """
+        return user_input.lstrip().replace(self.wake_word, "")
+
+    async def help_response(self, message: discord.Message) -> None:
+        """A short helper function to handle responding to a user that asked for help.
+
+        Args:
+            message (discord.Message): The user message object.
+
+        """
         await message.channel.send(self.prompt_parser.help_text)
         await message.add_reaction(self.done_emoji)
 
-    async def process_prompt(self, message):
+    async def process_prompt(self, message: discord.Message) -> None:
+        """A function that handles passing a user message to the parser and then to the diffuser.
+
+        Args:
+            message (discord.Message): The user message object.
+        """
         logger.debug("Processing prompt")
         cleaned_message_text = self.clean_message(message.content)
         logger.info("Processing prompt '%s'", cleaned_message_text)
@@ -45,10 +71,9 @@ class StableDiscordBot(discord.Client):
         self.diffuser.make_image(**known_args)
         await message.channel.send(file=discord.File("img.png"))
         await message.add_reaction(self.done_emoji)
-        # TODO: Look up how to remove reactions
 
-    async def on_ready(self):
-        # TODO: Hook into discord logging
+    async def on_ready(self) -> None:
+        """An event-driven function that runs when the bot is first initialized."""
         logger.info("Logged on as %s!", self.user)
         for guild in self.guilds:
             for channel in guild.text_channels:
@@ -56,13 +81,12 @@ class StableDiscordBot(discord.Client):
                 self.seen_channels.append(channel)
                 await channel.send("I'm here!")
 
-    async def sign_off(self):
-        logger.info("Signing off.")
-        for channel in self.seen_channels:
-            logger.info("Signing off in channel: %s", channel)
-            await channel.send("I'm done for now.")
+    async def on_message(self, message: discord.Message) -> None:
+        """An event-driven function that runs whenever the bot sees a message on a channel it is in.
 
-    async def on_message(self, message):
+        Args:
+            message (discord.Message): The user message object.
+        """
         logger.debug("Seen message '%s' from %s", message.content, message.author)
 
         if message.author == self.user:
@@ -78,17 +102,3 @@ class StableDiscordBot(discord.Client):
                 return
 
             await self.process_prompt(message)
-
-
-# TODO: Fold this into the bot class
-def launch_bot(bot_client):
-    intents = discord.Intents(value=68608)
-    intents.message_content = True
-    intents.messages = True
-    intents.guilds = True
-
-    bot = bot_client(intents=intents)
-    try:
-        bot.run(os.getenv("DISCORD_TOKEN"))
-    finally:
-        pass
