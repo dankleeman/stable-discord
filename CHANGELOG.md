@@ -6,10 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - '???'
 ### Added
-    - Unit tests for the parser module
-    - Unit tests to the CI pipeline
-    - Lint checks passing
-    - Lint checks to the CI pipeline
+    - Unit tests for the parser module.
+    - Unit tests to the CI pipeline.
+    - Lint checks passing.
+    - Lint checks to the CI pipeline.
+    - Added config.toml for human-friendly updating of settings.
 ### Fixed
     - A bug where a user prompt including a single quote broke the argument parser as it expected a close quote.
 ## [0.2.0] - '2023-03-17'
