@@ -1,0 +1,4 @@
+title = "StableDiscord Configuration"
+
+[auth]
+discord_token="XXX"
