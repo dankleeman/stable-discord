@@ -2,6 +2,7 @@ import logging
 
 import discord
 
+from stable_discord.config import config
 from stable_discord.diffuser import Diffuser
 from stable_discord.parser import PromptParser
 
@@ -18,6 +19,7 @@ class StableDiscordBot(discord.Client):
     prompt_parser: PromptParser
     diffuser: Diffuser
     discord_token: str
+    allowed_channels: set[discord.TextChannel]
 
     def __init__(self, wake_word: str = "/art"):
         intents = discord.Intents(value=68608)
@@ -29,7 +31,7 @@ class StableDiscordBot(discord.Client):
         self.wake_word = wake_word
         self.seen_channels = []
         self.prompt_parser = PromptParser()
-        self.diffuser = Diffuser()
+        # self.diffuser = Diffuser()
 
     def clean_message(self, user_input: str) -> str:
         """A short helper function that cleans a user message. Here, clean means removing the "wake word" and stripping
@@ -75,11 +77,26 @@ class StableDiscordBot(discord.Client):
     async def on_ready(self) -> None:
         """An event-driven function that runs when the bot is first initialized."""
         logger.info("Logged on as %s!", self.user)
-        for guild in self.guilds:
-            for channel in guild.text_channels:
-                logger.info("Announcing login in channel: %s", channel)
-                self.seen_channels.append(channel)
-                await channel.send("I'm here!")
+        self.set_allowed_channels()
+        for channel in self.allowed_channels:
+            logger.info("Announcing login in server:channel - '%s:%s'", channel.guild.name, channel)
+            await channel.send("I'm here!")
+
+    def set_allowed_channels(self):
+        channels_dict = {
+            f"{guild.name}:{channel.name}": channel for guild in self.guilds for channel in guild.text_channels
+        }
+
+        if config["discord_settings"]["listen_channels"]:
+            self.allowed_channels = {
+                channels_dict[key] for key in channels_dict if key in config["discord_settings"]["listen_channels"]
+            }
+        elif config["discord_settings"]["ignore_channels"]:
+            self.allowed_channels = {
+                channels_dict[key] for key in channels_dict if key not in config["discord_settings"]["ignore_channels"]
+            }
+        else:
+            self.allowed_channels = set(channels_dict.values())
 
     async def on_message(self, message: discord.Message) -> None:
         """An event-driven function that runs whenever the bot sees a message on a channel it is in.
@@ -87,14 +104,20 @@ class StableDiscordBot(discord.Client):
         Args:
             message (discord.Message): The user message object.
         """
-        logger.debug("Seen message '%s' from %s", message.content, message.author)
+        logger.debug(
+            "Seen message '%s' from %s on %s channel on %s server",
+            message.content,
+            message.author,
+            message.channel,
+            message.channel.guild,
+        )
 
-        if message.author == self.user:
-            logger.debug("Message was from this bot. Ignoring.")
-            return
-
-        if message.content.startswith(self.wake_word):
-            logger.debug("Wake-word detected.")
+        if (
+            message.channel in self.allowed_channels
+            and message.author != self.user
+            and message.content.startswith(self.wake_word)
+        ):
+            logger.debug("Wake-word detected in message on allowed channel.")
             await message.add_reaction(self.ack_emoji)
 
             if "--help" in message.content:
