@@ -1,3 +1,5 @@
+import pytest
+
 from stable_discord.parser import PromptParser
 
 
@@ -81,3 +83,48 @@ def test_quote_in_prompt():
     known, unknown = p.parse_input("a cute cat's face.")
     assert known == {"prompt": "a cute cat's face.", "cfg": 7.5, "steps": 50}
     assert unknown == ""
+
+    known, unknown = p.parse_input("a man's cat's face.")
+    assert known == {"prompt": "a man's cat's face.", "cfg": 7.5, "steps": 50}
+    assert unknown == ""
+
+
+def test_double_quote_in_prompt():
+    p = PromptParser()
+    with pytest.raises(ValueError) as e:
+        known, unknown = p.parse_input('A man saying "hello.')
+        assert known == {"prompt": 'A man saying "hello" .', "cfg": 7.5, "steps": 50}
+        assert unknown == ""
+        assert e.value == "No closing quotation"
+
+    known, unknown = p.parse_input('A man saying "hello".')
+    assert known == {"prompt": 'A man saying "hello" .', "cfg": 7.5, "steps": 50}
+    assert unknown == ""
+
+
+def test_parentheses_in_prompt():
+    p = PromptParser()
+    known, unknown = p.parse_input("A man (with his cat) eating a pizza.")
+    assert known == {"prompt": "A man (with his cat) eating a pizza.", "cfg": 7.5, "steps": 50}
+    assert unknown == ""
+
+    known, unknown = p.parse_input("A man (with his cat eating a pizza.")
+    assert known == {"prompt": "A man (with his cat eating a pizza.", "cfg": 7.5, "steps": 50}
+    assert unknown == ""
+
+
+def test_mangled_arg_names():
+    p = PromptParser()
+    known, unknown = p.parse_input("A man in a chair -- steps")
+    assert known == {"prompt": "A man in a chair steps", "cfg": 7.5, "steps": 50}
+    assert unknown == ""
+
+    known, unknown = p.parse_input("A man in a chair")
+    assert known == {"prompt": "A man in a chair", "cfg": 7.5, "steps": 50}
+    assert unknown == ""
+
+    with pytest.raises(SystemExit) as e:
+        known, unknown = p.parse_input("A man in a chair --step (500)")
+        assert known == {"prompt": "A man in a chair", "cfg": 7.5, "steps": 50}
+        assert unknown == "--step (500)"
+        assert e.value == 2

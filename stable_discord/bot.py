@@ -64,14 +64,12 @@ class StableDiscordBot(discord.Client):
         logger.info("Processing prompt '%s'", cleaned_message_text)
         known_args, unknown_args = self.prompt_parser.parse_input(cleaned_message_text)
 
-        await message.channel.send(f"Parsed args: {known_args}")
-
         if unknown_args:
             await message.channel.send(f"Skipping unknown args: {unknown_args}")
 
         await message.add_reaction(self.in_prog_emoji)
-        self.diffuser.make_image(**known_args)
-        await message.channel.send(file=discord.File("img.png"))
+        file_name = self.diffuser.make_image(**known_args)
+        await message.channel.send(file=discord.File(file_name), content=f"Parsed args: {known_args}")
         await message.add_reaction(self.done_emoji)
 
     async def on_ready(self) -> None:
