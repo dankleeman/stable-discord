@@ -8,6 +8,7 @@ from stable_discord.parser import PromptParser
 
 logger = logging.getLogger(__name__)
 
+
 # TODO: Look into unblocking some of these steps: https://stackoverflow.com/questions/65881761/discord-gateway-warning-shard-id-none-heartbeat-blocked-for-more-than-10-second
 class StableDiscordBot(discord.Client):
     # TODO: Standardize emojis
@@ -51,7 +52,7 @@ class StableDiscordBot(discord.Client):
         logger.info("Logged on as %s!", self.user)
         for guild in self.guilds:
             for channel in guild.text_channels:
-                logger.info('Announcing login in channel: %s', channel)
+                logger.info("Announcing login in channel: %s", channel)
                 self.seen_channels.append(channel)
                 await channel.send("I'm here!")
 
