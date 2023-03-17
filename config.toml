@@ -2,3 +2,6 @@ title = "StableDiscord Configuration"
 
 [auth]
 discord_token="XXX"
+
+[misc_settings]
+log_dir="logs"
