@@ -13,6 +13,7 @@ diffusers = "^0.14.0"
 transformers = "^4.27.1"
 torch = "^2.0.0"
 accelerate = "^0.17.1"
+tomli = "^2.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
