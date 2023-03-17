@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - '2023-03-18'
+### Added
+    - Added output_images directory.
+    - Added random nonce to file names to avoid collisions on async requests for saving vs sending an image.
+    - Updated bot response to send prompt text and image at the same time.
+    - Added more tests covering error-causing user inputs.
 ## [0.3.0] - '2023-03-17'
 ### Added
     - Unit tests for the parser module.

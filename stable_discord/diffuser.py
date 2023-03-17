@@ -34,6 +34,6 @@ class Diffuser:  # pylint: disable=too-few-public-methods
         """
 
         image = self.pipeline(prompt=prompt, guidance_scale=cfg, num_inference_steps=steps).images[0]
-        file_name = f"output_images/img_{random.randint(1, 10**6)}.png"
+        file_name = f"output_images/img_{random.randint(1, 10**10)}.png"
         image.save(file_name)
         return file_name
