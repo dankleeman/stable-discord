@@ -49,7 +49,7 @@ class PromptParser:
         """
         return self.parser.format_help()
 
-    def parse_prompt(self, user_input: str) -> tuple[dict[str, Any], str]:
+    def parse_input(self, user_input: str) -> tuple[dict[str, Any], str]:
         """
 
         Args:
@@ -61,7 +61,7 @@ class PromptParser:
                 user feedback or logging.
         """
         logger.debug("Parsing args from: %s", user_input)
-        known_args, unknown_args = self.parser.parse_known_args(shlex.split(user_input))
+        known_args, unknown_args = self.parser.parse_known_args(shlex.split(user_input, posix=False))
         known_args = vars(known_args)
 
         known_args["prompt"] = " ".join(known_args["prompt"])

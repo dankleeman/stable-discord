@@ -60,7 +60,7 @@ class StableDiscordBot(discord.Client):
         logger.debug("Processing prompt")
         cleaned_message_text = self.clean_message(message.content)
         logger.info("Processing prompt '%s'", cleaned_message_text)
-        known_args, unknown_args = self.prompt_parser.parse_prompt(cleaned_message_text)
+        known_args, unknown_args = self.prompt_parser.parse_input(cleaned_message_text)
 
         await message.channel.send(f"Parsed args: {known_args}")
 

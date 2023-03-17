@@ -30,3 +30,6 @@ jobs:
 
       - name: Lint Check
         run: make lint
+
+      - name: Unit Tests
+        run: make test

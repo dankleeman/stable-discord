@@ -22,4 +22,4 @@ lint.pylint:
 lint: lint.flake8 lint.pylint
 
 test:
-	poetry run pytest --cov
+	poetry run pytest
