@@ -7,14 +7,14 @@ format.black:
 format.isort:
 	poetry run isort --atomic ${SOURCE_OBJECTS}
 
-format: format.isort format.black
-
-lint.format.check:
+format.check:
 	poetry run black --check ${SOURCE_OBJECTS}
 	poetry run isort --check-only ${SOURCE_OBJECTS}
 
+format: format.isort format.black
+
 lint.flake8:
-	poetry run flake8 ${SOURCE_obJECtS}
+	poetry run flake8 ${SOURCE_OBJECTS}
 
 lint.pylint:
 	poetry run pylint --rcfile pyproject.toml ${SOURCE_OBJECTS}
@@ -22,4 +22,4 @@ lint.pylint:
 lint: lint.flake8 lint.pylint
 
 test:
-	poetry run pytest --cov
+	poetry run pytest

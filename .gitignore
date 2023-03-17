@@ -133,3 +133,6 @@ dmypy.json
 
 # Image files
 *.png
+
+# Config file
+config.toml
