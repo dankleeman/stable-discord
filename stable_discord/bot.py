@@ -83,7 +83,7 @@ class StableDiscordBot(discord.Client):
         Returns:
             str: The cleaned user message.
         """
-        return user_input.lstrip().replace(self.wake_word, "")
+        return user_input.replace(self.wake_word, "").lstrip()
 
     async def help_response(self, message: discord.Message) -> None:
         """A short helper function to handle responding to a user that asked for help.
