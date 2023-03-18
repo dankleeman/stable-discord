@@ -39,7 +39,7 @@ class Diffuser:  # pylint: disable=too-few-public-methods
 
         if self.config_settings["enable_xformers_attention"]:
             logger.info("Enabling Xformers memory efficient attention.")
-            self.pipeline.enable_attention_slicing()
+            self.pipeline..enable_xformers_memory_efficient_attention()()
 
     def make_image(self, prompt: str, cfg: float, steps: int) -> str:
         """Call the huggingface pipeline with several arguments and save the resulting image to disk as "img.png"
