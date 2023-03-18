@@ -21,7 +21,7 @@ class Diffuser:  # pylint: disable=too-few-public-methods
 
     def __init__(self, model_name: str = "stabilityai/stable-diffusion-2-1") -> None:
         logger.info("CUDA is available: %s", torch.cuda.is_available())
-        self.config_settings = config["diffuser_settings"]
+        self.config_settings = config["diffuser"]["settings"]
         self.cuda_is_available = torch.cuda.is_available()
 
         if not self.config_settings["use_gpu"]:
