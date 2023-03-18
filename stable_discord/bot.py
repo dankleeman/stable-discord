@@ -13,8 +13,8 @@ class StableDiscordBot(discord.Client):
     """A class that handles interacting with the users on discord and coordinating between the different parts
     of the stable-discord system"""
 
-    ack_emoji: str = "\N{THUMBS UP SIGN}"
-    in_prog_emoji: str = "\N{STOPWATCH}"
+    ack_emoji: str = "👍"
+    in_prog_emoji: str = "⏱️"
     done_emoji: str = "💯"
     wake_word: str
     prompt_parser: PromptParser
