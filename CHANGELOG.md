@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0] - '???'
+## [0.5.0] - '2023-03-19'
 ### Added
     - Added discord.settings and diffuser.settings to config file so that the user can influence bot and diffuser behavior without editing code
     - Added listen_channels and ignore_channels lists to config file so bot can be configured to only respond on a subset of available channels
