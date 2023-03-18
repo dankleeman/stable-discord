@@ -30,9 +30,9 @@ class Diffuser:  # pylint: disable=too-few-public-methods
 
         if self.config_settings["use_half_precision"]:
             logger.info("Using half-precision 16-bit floats.")
-            torch_dtype = torch.float16
+            torch_dtype = torch.float16  # pylint: disable=no-member
         else:
-            torch_dtype = torch.float32
+            torch_dtype = torch.float32  # pylint: disable=no-member
 
         self.pipeline = StableDiffusionPipeline.from_pretrained(model_name, torch_dtype=torch_dtype)
         self.pipeline.to("cuda")
