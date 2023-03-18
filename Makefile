@@ -23,3 +23,11 @@ lint: lint.flake8 lint.pylint
 
 test:
 	poetry run pytest
+
+setup:
+	python3 -m pip install poetry
+	poetry install
+
+setup.windows:
+	poetry install
+	poetry run pip install torch==1.3.1+cu117 -f https://download.pytorch.org/whl/torch_stable.html

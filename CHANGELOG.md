@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - '???'
+### Added
+    - Added discord.settings and diffuser.settings to config file so that the user can influence bot and diffuser behavior without editing code
+    - Added listen_channels and ignore_channels lists to config file so bot can be configured to only respond on a subset of available channels
+    - Added use_gpu, use_half_precision, and enable_xformers_attention to config file
+    - 
+### Changed
+    - Changed bot messaging so that it replies to users messages for increased clarity
+    - Downgraded pytorch dependency from 2.0.0 to 1.3.0 to allow xformers compatibility
 ## [0.4.0] - '2023-03-18'
 ### Added
     - Added output_images directory.

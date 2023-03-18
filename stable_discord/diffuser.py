@@ -4,6 +4,8 @@ import random
 import torch
 from diffusers import StableDiffusionPipeline
 
+from stable_discord.config import config
+
 logger = logging.getLogger(__name__)
 
 
@@ -15,11 +17,29 @@ class Diffuser:  # pylint: disable=too-few-public-methods
         model_name (str): The huggingface model name to use for image generation.
     """
 
+    config_settings: dict
+
     def __init__(self, model_name: str = "stabilityai/stable-diffusion-2-1") -> None:
-        logger.debug("CUDA is available: %s", torch.cuda.is_available())
+        logger.info("CUDA is available: %s", torch.cuda.is_available())
+        self.config_settings = config["diffuser_settings"]
         self.cuda_is_available = torch.cuda.is_available()
-        self.pipeline = StableDiffusionPipeline.from_pretrained(model_name)
+
+        if not self.config_settings["use_gpu"]:
+            self.pipeline = StableDiffusionPipeline.from_pretrained(model_name)
+            return
+
+        if self.config_settings["use_half_precision"]:
+            logger.info("Using half-precision 16-bit floats.")
+            torch_dtype = torch.float16
+        else:
+            torch_dtype = torch.float32
+
+        self.pipeline = StableDiffusionPipeline.from_pretrained(model_name, torch_dtype=torch_dtype)
         self.pipeline.to("cuda")
+
+        if self.config_settings["enable_xformers_attention"]:
+            logger.info("Enabling Xformers memory efficient attention.")
+            self.pipeline.enable_attention_slicing()
 
     def make_image(self, prompt: str, cfg: float, steps: int) -> str:
         """Call the huggingface pipeline with several arguments and save the resulting image to disk as "img.png"
