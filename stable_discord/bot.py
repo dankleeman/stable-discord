@@ -130,7 +130,6 @@ class StableDiscordBot(discord.Client):
         file_name = self.diffuser.make_image(**known_args)
         logger.info("for prompt: %s, generated_image: %s", known_args, file_name)
         await message.reply(file=discord.File(file_name), content=f"Parsed args: {known_args}")
-        await message.remove_reaction(self.ack_emoji, self.user)
         await message.remove_reaction(self.in_prog_emoji, self.user)
         await message.add_reaction(self.done_emoji)
 
