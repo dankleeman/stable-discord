@@ -22,6 +22,8 @@ class StableDiscordBot(discord.Client):
     discord_token: str
     allowed_channels: set[discord.TextChannel]
     config_settings: dict
+    allowed_users: set[str]
+    disallowed_users: set[str]
 
     def __init__(self, wake_word: str = "/art"):
         intents = discord.Intents(value=68608)
@@ -32,6 +34,8 @@ class StableDiscordBot(discord.Client):
         super().__init__(intents=intents)
         self.wake_word = wake_word
         self.config_settings = config["discord_settings"]
+        self.allowed_users = self.config_settings['listen_users']
+        self.disallowed_users = self.config_settings['ignore_users']
 
         self.seen_channels = []
         self.prompt_parser = PromptParser()
@@ -41,8 +45,8 @@ class StableDiscordBot(discord.Client):
         """Look through the channels available to the bot and apply rules from the config file to decide which
         channels to take input from.
 
-        1. If "listen_channels" has values, set the allowed_channels to be a set of those channel objects
-        2. If "listen_channels" is not present and "ignore_channels" is, set the allowed_channels to be a set of
+        1. If "listen_channels" has values then set the allowed_channels to be a set of those channel objects
+        2. If "listen_channels" is not present and "ignore_channels" is then set the allowed_channels to be a set of
             available channels not in the "ignore_channels" list.
         3. Otherwise, allowed_channels is set to be a set of all seen channels.
         """
@@ -91,7 +95,7 @@ class StableDiscordBot(discord.Client):
         await message.reply(self.prompt_parser.help_text)
         await message.add_reaction(self.done_emoji)
 
-    async def process_prompt(self, message: discord.Message) -> None:
+    async def handle_user_input(self, message: discord.Message) -> None:
         """A function that handles passing a user message to the parser and then to the diffuser.
 
         Args:
@@ -101,7 +105,20 @@ class StableDiscordBot(discord.Client):
         cleaned_message_text = self.clean_message(message.content)
 
         logger.info("Processing prompt '%s' from %s", cleaned_message_text, message.author)
-        known_args, unknown_args = self.prompt_parser.parse_input(cleaned_message_text)
+        try:
+            known_args, unknown_args = self.prompt_parser.parse_input(cleaned_message_text)
+        except ValueError as e:
+            if e.args[0] == 'No closing quotation':
+                await message.reply("Prompt has open quotation with no closing quotation. Please fix and try again.")
+            else:
+                await message.reply("Prompt has unspecified syntax error. Please fix and try again.")
+            return
+        except SystemExit as e:
+            if e.args[0] == 2:
+                await message.reply("Prompt has invalid integer input on integer argument. Please fix and try again.")
+            else:
+                await message.reply("Prompt has unspecified syntax error. Please fix and try again.")
+            return
 
         if unknown_args:
             await message.reply(f"Skipping unknown args: {unknown_args}")
@@ -113,7 +130,31 @@ class StableDiscordBot(discord.Client):
         file_name = self.diffuser.make_image(**known_args)
         logger.info("for prompt: %s, generated_image: %s", known_args, file_name)
         await message.reply(file=discord.File(file_name), content=f"Parsed args: {known_args}")
+        await message.remove_reaction(self.in_prog_emoji, self.user)
         await message.add_reaction(self.done_emoji)
+
+    def user_is_allowed(self, user: discord.User) -> bool:
+        """Decide if the given user should be allowed to send input to the diffuser.
+
+        In all cases the bot itself is not allowed.
+        1. If allowed_users has values then the user is allowed if their "name#id" string is in allowed_users
+        2. If allowed_users is empty and disallowed_users has values then the user is allowed if their "name#id" is not
+            in the disallowed_users.
+        3. Otherwise, the user is allowed.
+
+        Args:
+            user (discord.User): The user to be checked for is_allowed status.
+
+        Returns:
+            bool: Whether the user is allowed to send input to the diffuser.
+        """
+        if self.allowed_users:
+            return f'{user.name}#{user.id}' in self.allowed_users and user != self.user
+
+        if self.disallowed_users:
+            return f'{user.name}#{user.id}' not in self.disallowed_users and user != self.user
+
+        return user != self.user
 
     async def on_message(self, message: discord.Message) -> None:
         """An event-driven function that runs whenever the bot sees a message on a channel it is in.
@@ -130,9 +171,9 @@ class StableDiscordBot(discord.Client):
         )
 
         if (
-            message.channel in self.allowed_channels
-            and message.author != self.user
-            and message.content.startswith(self.wake_word)
+            message.content.startswith(self.wake_word)
+            and message.channel in self.allowed_channels
+            and self.user_is_allowed(message.author)
         ):
             logger.debug("Wake-word detected in message on allowed channel.")
             await message.add_reaction(self.ack_emoji)
@@ -141,4 +182,4 @@ class StableDiscordBot(discord.Client):
                 await self.help_response(message)
                 return
 
-            await self.process_prompt(message)
+            await self.handle_user_input(message)

@@ -6,8 +6,13 @@ discord_token="XXX"
 [discord.settings]
 # Set channels that the bot listens and responds on. Specify in case-sensitive "server:channel" format
 # If both are set, only listen_channels is used. If neither are set, the bot will listen on all channels it is invited.
- listen_channels = []
- ignore_channels = []
+listen_channels = []
+ignore_channels = []
+
+# Set users that the bot listens and responds to. Specify in case-sensitive "username#id" format
+# If both are set, only listen_users is used. If neither are set, the bot will listen to all members, but never itself.
+listen_users = []
+ignore_users = []
 
 [diffuser.settings]
 use_gpu = true

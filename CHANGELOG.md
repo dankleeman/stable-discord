@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
     - Added discord.settings and diffuser.settings to config file so that the user can influence bot and diffuser behavior without editing code
     - Added listen_channels and ignore_channels lists to config file so bot can be configured to only respond on a subset of available channels
+    - Added listen_users and ignore_users lists to config file so bot can be configured to only respond to a subset of users
     - Added use_gpu, use_half_precision, and enable_xformers_attention to config file
     - Added check to have the bot ignore empty prompts.
+    - Added endpoints to the Makefile, make.setup to install on unix-like systems and make.setup_windows to install pytorch with cuda on Windows machines.
 ### Changed
     - Changed bot messaging so that it replies to users messages for increased clarity
     - Downgraded pytorch dependency from 2.0.0 to 1.3.0 to allow xformers compatibility
