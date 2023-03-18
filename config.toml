@@ -17,9 +17,9 @@ ignore_users = []
 wake_word = "/art"
 
 [discord.style]
-ack_emoji: str = "👍"
-in_prog_emoji: str = "⏱️"
-done_emoji: str = "💯"
+ack_emoji = "👍"
+in_prog_emoji = "⏱️"
+done_emoji = "💯"
 
 [diffuser.settings]
 use_gpu = true
