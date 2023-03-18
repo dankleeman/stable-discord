@@ -36,6 +36,9 @@ class StableDiscordBot(discord.Client):
         self.config_settings = config["discord"]["settings"]
         self.allowed_users = self.config_settings['listen_users']
         self.disallowed_users = self.config_settings['ignore_users']
+        
+        logger.info("Allowed users: %s", self.allowed_users)
+        logger.info("Disallowed users: %s", self.disallowed_users)
 
         self.seen_channels = []
         self.prompt_parser = PromptParser()
@@ -149,10 +152,10 @@ class StableDiscordBot(discord.Client):
             bool: Whether the user is allowed to send input to the diffuser.
         """
         if self.allowed_users:
-            return f'{user.name}#{user.id}' in self.allowed_users and user != self.user
+            return f'{user.name}#{user.discriminator}' in self.allowed_users and user != self.user
 
         if self.disallowed_users:
-            return f'{user.name}#{user.id}' not in self.disallowed_users and user != self.user
+            return f'{user.name}#{user.discriminator}' not in self.disallowed_users and user != self.user
 
         return user != self.user
 
