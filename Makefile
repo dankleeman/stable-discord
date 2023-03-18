@@ -30,4 +30,4 @@ setup:
 
 setup.windows:
 	poetry install
-	poetry run pip install torch==1.3.1+cu117 -f https://download.pytorch.org/whl/torch_stable.html
+	poetry run pip install torch==1.13.1+cu117 -f https://download.pytorch.org/whl/torch_stable.html
