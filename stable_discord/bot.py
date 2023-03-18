@@ -37,6 +37,38 @@ class StableDiscordBot(discord.Client):
         self.prompt_parser = PromptParser()
         self.diffuser = Diffuser()
 
+    def set_allowed_channels(self):
+        """Look through the channels available to the bot and apply rules from the config file to decide which
+        channels to take input from.
+
+        1. If "listen_channels" has values, set the allowed_channels to be a set of those channel objects
+        2. If "listen_channels" is not present and "ignore_channels" is, set the allowed_channels to be a set of
+            available channels not in the "ignore_channels" list.
+        3. Otherwise, allowed_channels is set to be a set of all seen channels.
+        """
+        channels_dict = {
+            f"{guild.name}:{channel.name}": channel for guild in self.guilds for channel in guild.text_channels
+        }
+
+        if self.config_settings["listen_channels"]:
+            self.allowed_channels = {
+                channels_dict[key] for key in channels_dict if key in self.config_settings["listen_channels"]
+            }
+        elif config["discord_settings"]["ignore_channels"]:
+            self.allowed_channels = {
+                channels_dict[key] for key in channels_dict if key not in self.config_settings["ignore_channels"]
+            }
+        else:
+            self.allowed_channels = set(channels_dict.values())
+
+    async def on_ready(self) -> None:
+        """An event-driven function that runs when the bot is first initialized."""
+        logger.info("Logged on as %s!", self.user)
+        self.set_allowed_channels()
+        for channel in self.allowed_channels:
+            logger.info("Announcing login in server:channel - '%s:%s'", channel.guild.name, channel)
+            await channel.send("I'm here!")
+
     def clean_message(self, user_input: str) -> str:
         """A short helper function that cleans a user message. Here, clean means removing the "wake word" and stripping
             away leading whitespace.
@@ -82,38 +114,6 @@ class StableDiscordBot(discord.Client):
         logger.info("for prompt: %s, generated_image: %s", known_args, file_name)
         await message.reply(file=discord.File(file_name), content=f"Parsed args: {known_args}")
         await message.add_reaction(self.done_emoji)
-
-    def set_allowed_channels(self):
-        """Look through the channels available to the bot and apply rules from the config file to decide which
-        channels to take input from.
-
-        1. If "listen_channels" has values, set the allowed_channels to be a set of those channel objects
-        2. If "listen_channels" is not present and "ignore_channels" is, set the allowed_channels to be a set of
-            available channels not in the "ignore_channels" list.
-        3. Otherwise, allowed_channels is set to be a set of all seen channels.
-        """
-        channels_dict = {
-            f"{guild.name}:{channel.name}": channel for guild in self.guilds for channel in guild.text_channels
-        }
-
-        if self.config_settings["listen_channels"]:
-            self.allowed_channels = {
-                channels_dict[key] for key in channels_dict if key in self.config_settings["listen_channels"]
-            }
-        elif config["discord_settings"]["ignore_channels"]:
-            self.allowed_channels = {
-                channels_dict[key] for key in channels_dict if key not in self.config_settings["ignore_channels"]
-            }
-        else:
-            self.allowed_channels = set(channels_dict.values())
-
-    async def on_ready(self) -> None:
-        """An event-driven function that runs when the bot is first initialized."""
-        logger.info("Logged on as %s!", self.user)
-        self.set_allowed_channels()
-        for channel in self.allowed_channels:
-            logger.info("Announcing login in server:channel - '%s:%s'", channel.guild.name, channel)
-            await channel.send("I'm here!")
 
     async def on_message(self, message: discord.Message) -> None:
         """An event-driven function that runs whenever the bot sees a message on a channel it is in.
