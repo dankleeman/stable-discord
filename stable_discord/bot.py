@@ -58,7 +58,7 @@ class StableDiscordBot(discord.Client):
             self.allowed_channels = {
                 channels_dict[key] for key in channels_dict if key in self.config_settings["listen_channels"]
             }
-        elif config["discord_settings"]["ignore_channels"]:
+        elif self.config_settings["ignore_channels"]:
             self.allowed_channels = {
                 channels_dict[key] for key in channels_dict if key not in self.config_settings["ignore_channels"]
             }
