@@ -14,6 +14,13 @@ ignore_channels = []
 listen_users = []
 ignore_users = []
 
+wake_word = "/art"
+
+[discord.style]
+ack_emoji: str = "👍"
+in_prog_emoji: str = "⏱️"
+done_emoji: str = "💯"
+
 [diffuser.settings]
 use_gpu = true
 use_half_precision = true

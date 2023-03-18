@@ -13,36 +13,23 @@ class StableDiscordBot(discord.Client):
     """A class that handles interacting with the users on discord and coordinating between the different parts
     of the stable-discord system"""
 
-    ack_emoji: str = "👍"
-    in_prog_emoji: str = "⏱️"
-    done_emoji: str = "💯"
-    wake_word: str
-    prompt_parser: PromptParser
-    diffuser: Diffuser
-    discord_token: str
-    allowed_channels: set[discord.TextChannel]
-    config_settings: dict
-    allowed_users: set[str]
-    disallowed_users: set[str]
-
-    def __init__(self, wake_word: str = "/art"):
+    def __init__(self):
         intents = discord.Intents(value=68608)
         intents.message_content = True
         intents.messages = True
         intents.guilds = True
 
         super().__init__(intents=intents)
-        self.wake_word = wake_word
-        self.config_settings = config["discord"]["settings"]
-        self.allowed_users = self.config_settings['listen_users']
-        self.disallowed_users = self.config_settings['ignore_users']
-        
+        self.config: dict = config["discord"]
+        self.allowed_users: set[str] = set(self.config["settings"]["listen_users"])
+        self.disallowed_users: set[str] = set(self.config["settings"]["ignore_users"])
+        self.allowed_channels: set[discord.TextChannel] = set()
+
         logger.info("Allowed users: %s", self.allowed_users)
         logger.info("Disallowed users: %s", self.disallowed_users)
 
-        self.seen_channels = []
-        self.prompt_parser = PromptParser()
-        self.diffuser = Diffuser()
+        self.prompt_parser: PromptParser = PromptParser()
+        self.diffuser: Diffuser = Diffuser()
 
     def set_allowed_channels(self):
         """Look through the channels available to the bot and apply rules from the config file to decide which
@@ -57,13 +44,13 @@ class StableDiscordBot(discord.Client):
             f"{guild.name}:{channel.name}": channel for guild in self.guilds for channel in guild.text_channels
         }
 
-        if self.config_settings["listen_channels"]:
+        if self.config["settings"]["listen_channels"]:
             self.allowed_channels = {
-                channels_dict[key] for key in channels_dict if key in self.config_settings["listen_channels"]
+                channels_dict[key] for key in channels_dict if key in self.config["settings"]["listen_channels"]
             }
-        elif self.config_settings["ignore_channels"]:
+        elif self.config["settings"]["ignore_channels"]:
             self.allowed_channels = {
-                channels_dict[key] for key in channels_dict if key not in self.config_settings["ignore_channels"]
+                channels_dict[key] for key in channels_dict if key not in self.config["settings"]["ignore_channels"]
             }
         else:
             self.allowed_channels = set(channels_dict.values())
@@ -86,7 +73,7 @@ class StableDiscordBot(discord.Client):
         Returns:
             str: The cleaned user message.
         """
-        return user_input.replace(self.wake_word, "").lstrip()
+        return user_input.replace(self.config["settings"]["wake_word"], "").lstrip()
 
     async def help_response(self, message: discord.Message) -> None:
         """A short helper function to handle responding to a user that asked for help.
@@ -96,7 +83,7 @@ class StableDiscordBot(discord.Client):
 
         """
         await message.reply(self.prompt_parser.help_text)
-        await message.add_reaction(self.done_emoji)
+        await message.add_reaction(self.config["style"]["done_emoji"])
 
     async def handle_user_input(self, message: discord.Message) -> None:
         """A function that handles passing a user message to the parser and then to the diffuser.
@@ -111,7 +98,7 @@ class StableDiscordBot(discord.Client):
         try:
             known_args, unknown_args = self.prompt_parser.parse_input(cleaned_message_text)
         except ValueError as e:
-            if e.args[0] == 'No closing quotation':
+            if e.args[0] == "No closing quotation":
                 await message.reply("Prompt has open quotation with no closing quotation. Please fix and try again.")
             else:
                 await message.reply("Prompt has unspecified syntax error. Please fix and try again.")
@@ -129,12 +116,12 @@ class StableDiscordBot(discord.Client):
         if not known_args["prompt"]:
             await message.reply("Skipping request with empty prompt.")
 
-        await message.add_reaction(self.in_prog_emoji)
+        await message.add_reaction(self.config["style"]["in_prog_emoji"])
         file_name = self.diffuser.make_image(**known_args)
         logger.info("for prompt: %s, generated_image: %s", known_args, file_name)
         await message.reply(file=discord.File(file_name), content=f"Parsed args: {known_args}")
-        await message.remove_reaction(self.in_prog_emoji, self.user)
-        await message.add_reaction(self.done_emoji)
+        await message.remove_reaction(self.config["style"]["in_prog_emoji"], self.user)
+        await message.add_reaction(self.config["style"]["done_emoji"])
 
     def user_is_allowed(self, user: discord.User) -> bool:
         """Decide if the given user should be allowed to send input to the diffuser.
@@ -152,10 +139,10 @@ class StableDiscordBot(discord.Client):
             bool: Whether the user is allowed to send input to the diffuser.
         """
         if self.allowed_users:
-            return f'{user.name}#{user.discriminator}' in self.allowed_users and user != self.user
+            return f"{user.name}#{user.discriminator}" in self.allowed_users and user != self.user
 
         if self.disallowed_users:
-            return f'{user.name}#{user.discriminator}' not in self.disallowed_users and user != self.user
+            return f"{user.name}#{user.discriminator}" not in self.disallowed_users and user != self.user
 
         return user != self.user
 
@@ -174,12 +161,12 @@ class StableDiscordBot(discord.Client):
         )
 
         if (
-            message.content.startswith(self.wake_word)
+            message.content.startswith(self.config["settings"]["wake_word"])
             and message.channel in self.allowed_channels
             and self.user_is_allowed(message.author)
         ):
             logger.debug("Wake-word detected in message on allowed channel.")
-            await message.add_reaction(self.ack_emoji)
+            await message.add_reaction(self.config["style"]["ack_emoji"])
 
             if "--help" in message.content:
                 await self.help_response(message)
