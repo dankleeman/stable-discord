@@ -33,7 +33,7 @@ class StableDiscordBot(discord.Client):
 
         super().__init__(intents=intents)
         self.wake_word = wake_word
-        self.config_settings = config["discord_settings"]
+        self.config_settings = config["discord"]["settings"]
         self.allowed_users = self.config_settings['listen_users']
         self.disallowed_users = self.config_settings['ignore_users']
 
