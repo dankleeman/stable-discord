@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Added use_gpu, use_half_precision, and enable_xformers_attention to config file
     - Added check to have the bot ignore empty prompts.
     - Added endpoints to the Makefile, make.setup to install on unix-like systems and make.setup_windows to install pytorch with cuda on Windows machines.
+    - Added emoji reactions and wake_word items to the config.toml instead of being hardcoded.
 ### Changed
     - Changed bot messaging so that it replies to users messages for increased clarity
     - Downgraded pytorch dependency from 2.0.0 to 1.3.0 to allow xformers compatibility
