@@ -75,19 +75,37 @@ To give a command to the bot a user begins their message with the `wake_word` wh
 
 - `--cfg 7.5` - Adding `--cfg` to the prompt followed by a number alters the CFG parameter passed to the diffusion model. If not specified, this value defaults to 7.5.
 - `--steps 50` Adding `--steps` followed by an integer influences the number of diffusion steps the model takes. If not specified this value defaults to 50.
-# Example Behavior
+## Example Behavior
+Both of the examples below show the bot in use with user info redacted. Note how the bot defaults to responding with the parameters it parsed from the message. This allows the users to understand the inputs and riff off of eachother.
+
+### Basic Example
+![basic_example.png](assets/basic_example.png)
+
+### Long Prompt Example
+![long_prompt_example.png](assets/long_prompt_example.png)
+
+### Example with Parameters
+![params_example.png](assets/params_example.png)
+
+## Contributing
+This repository is open for use or to be forked freely. I intend to get Stable Discord to a stable state and leave it there, but I will consider contributions in the unlikely event they are provided.
 
 ## Changelog
 See `CHANGELOG.md` file in the root directory of this repository. 
+
 ## License
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
 See the `LICENSE` file in the root directory of this repository. 
+
 ## Notes
 ### Conventions
 README - https://www.makeareadme.com/
+
 Semantic Versioning - https://semver.org/
+
 Conventional Commits - https://www.conventionalcommits.org/en/v1.0.0/
 
 ### Other References
 This program uses emojis that can be referenced here: https://unicode.org/emoji/charts/full-emoji-list.html
+
 Licensing for Open Source: https://choosealicense.com/
