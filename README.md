@@ -49,7 +49,7 @@ If neither of the channel level settings are set, the bot will listen on all cha
 - `listen_channels` - A list of channels that the bot listens to. Specify in case-sensitive `[server:channel, server:channel]` format. Defaults to empty.
 - `ignore_channels`  A list of channels that the bot ignores. Specify in case-sensitive `[server:channel, server:channel]` format. Defaults to empty.
 
-If neither are set, the bot will listen to all members, but never itself.
+If neither are set, the bot will listen to all members, but never itself. Note that after the [Discord username change](https://discord.com/blog/usernames) the format is likely to be `username#0`. It used to be the case that "id" refered to the now deprecated discriminant.
 - `listen_users` - A list of users to which the bot listens and responds. Specify in case-sensitive `[username#id, username#id]` format. Defaults to empty.
 - `ignore_users` - A list of users that the bot ignores. Specify in case-sensitive `[username#id, username#id]` format. Defaults to empty.
 
