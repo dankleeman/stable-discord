@@ -38,7 +38,7 @@ While the config file also has comments, we describe each section and the option
 
 **Note:** Keep in mind that Stable Discord reads the configuration file at startup. For any changes to be reflected, the program needs to be restarted.
 ### \[auth\]
-- `discord_token`
+- `discord_token` - A string containing the API token assigned by Discord.
 
 ### \[discord.settings\]
 One of the key features of the bot is to be able to control where it is listening and two whom it is listening. Because this bot is running on hardware the user controls, if the user cannot limit who the bot acknowledges, then a user is susceptible to spam or other types of griefing.
