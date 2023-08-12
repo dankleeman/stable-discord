@@ -2,7 +2,7 @@ import logging
 import random
 
 import torch
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusionPipeline  # type: ignore
 
 from stable_discord.config import config
 
