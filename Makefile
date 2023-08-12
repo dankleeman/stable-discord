@@ -19,10 +19,13 @@ lint.flake8:
 lint.pylint:
 	poetry run pylint --rcfile pyproject.toml ${SOURCE_OBJECTS}
 
-lint: lint.flake8 lint.pylint
+lint.mypy:
+	poetry run mypy ${SOURCE_OBJECTS}
+
+lint: lint.flake8 lint.pylint lint.mypy
 
 test:
-	poetry run pytest
+	poetry run pytest --cov stable_discord
 
 setup:
 	python3 -m pip install poetry
