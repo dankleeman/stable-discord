@@ -1,6 +1,6 @@
 import logging
+import warnings
 from logging.handlers import TimedRotatingFileHandler
-
 from stable_discord.config import config
 
 
@@ -14,7 +14,9 @@ def setup_logger(dir_path: str = f"{config['misc_settings']['log_dir']}/stable-d
         logging.Logger: The logger object.
     """
     if not dir_path:
-        dir_path = config.get_or()
+        warnings.warn("Empty log_dir set in config.toml so defaulting to logs/ as logs_dir.")
+        dir_path = "logs/stable-discord.log"
+
     logging.basicConfig(
         format="%(asctime)s %(name)s %(levelname)s %(message)s",
         level=logging.INFO,

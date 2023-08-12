@@ -1,9 +1,7 @@
 import logging
-import random
-
 import torch
-from diffusers import StableDiffusionPipeline
-
+from diffusers import StableDiffusionPipeline  # type: ignore
+import secrets
 from stable_discord.config import config
 
 logger = logging.getLogger(__name__)
@@ -50,10 +48,11 @@ class Diffuser:  # pylint: disable=too-few-public-methods
             steps (int): The number of diffusion steps to perform.
 
         Return:
-            str: The file_name string
+            str: The file_path string to the made image saved on disk.
         """
 
         image = self.pipeline(prompt=prompt, guidance_scale=cfg, num_inference_steps=steps).images[0]
-        file_name = f"output_images/img_{random.randint(1, 10**10)}.png"
-        image.save(file_name)
-        return file_name
+        image_nonce = secrets.token_hex(16)
+        file_path = f"{config['output_img_dir']}/img_{image_nonce}.png"
+        image.save(file_path)
+        return file_path

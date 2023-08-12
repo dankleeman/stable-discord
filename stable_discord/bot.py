@@ -13,7 +13,7 @@ class StableDiscordBot(discord.Client):
     """A class that handles interacting with the users on discord and coordinating between the different parts
     of the stable-discord system"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         intents = discord.Intents(value=68608)
         intents.message_content = True
         intents.messages = True
@@ -31,7 +31,7 @@ class StableDiscordBot(discord.Client):
         self.prompt_parser: PromptParser = PromptParser()
         self.diffuser: Diffuser = Diffuser()
 
-    def set_allowed_channels(self):
+    def set_allowed_channels(self) -> None:
         """Look through the channels available to the bot and apply rules from the config file to decide which
         channels to take input from.
 
@@ -120,7 +120,7 @@ class StableDiscordBot(discord.Client):
         file_name = self.diffuser.make_image(**known_args)
         logger.info("for prompt: %s, generated_image: %s", known_args, file_name)
         await message.reply(file=discord.File(file_name), content=f"Parsed args: {known_args}")
-        await message.remove_reaction(self.config["style"]["in_prog_emoji"], self.user)
+        await message.remove_reaction(self.config["style"]["in_prog_emoji"], self.user)  # type: ignore
         await message.add_reaction(self.config["style"]["done_emoji"])
 
     def user_is_allowed(self, user: discord.User) -> bool:
@@ -163,7 +163,7 @@ class StableDiscordBot(discord.Client):
         if (
             message.content.startswith(self.config["settings"]["wake_word"])
             and message.channel in self.allowed_channels
-            and self.user_is_allowed(message.author)
+            and self.user_is_allowed(message.author)  # type: ignore
         ):
             logger.debug("Wake-word detected in message on allowed channel.")
             await message.add_reaction(self.config["style"]["ack_emoji"])
