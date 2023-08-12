@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - '2023-08-11'
+### Added
+    - A full README.md with example usage, installation instructions, and config documentation.
+    - Updated the repository license to GPLv3.
 ## [0.5.0] - '2023-03-19'
 ### Added
     - Added discord.settings and diffuser.settings to config file so that the user can influence bot and diffuser behavior without editing code
