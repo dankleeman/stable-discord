@@ -1,4 +1,5 @@
 import tomli
+import os
 
 with open("config.toml", "rb") as f:
     config = tomli.load(f)

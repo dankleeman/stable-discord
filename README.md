@@ -37,6 +37,9 @@ Stable Discord is intended to require only changes to the single `config.toml` f
 While the config file also has comments, we describe each section and the options therein in detail here.
 
 **Note:** Keep in mind that Stable Discord reads the configuration file at startup. For any changes to be reflected, the program needs to be restarted.
+
+One thing that is not present in the `config.toml` file is the ability to set where one of the dependencies, HuggingFace, saves the transformer model files. These files can be quite large. If you would like to change this directory or clear it out, please refer to your `TRANSFORMER_CACHE` environment variable after having completed the installation steps for Stable Discord. More information can be found at [this](https://stackoverflow.com/questions/63312859/how-to-change-huggingface-transformers-default-cache-directory) StackOverflow post.
+
 ### \[auth\]
 - `discord_token` - A string containing the API token assigned by Discord.
 
@@ -65,6 +68,7 @@ The following settings are small quality-of-life improvements so that users get 
 - `enable_xformers_attention` - A boolean flag indicating if the diffusion model should use the [xFormers](https://github.com/facebookresearch/xformers) library for accelerated attention. Defaults to `True`.
 ### \[misc_settings\]
 - `log_dir`  - A path to the desired logging directory. Defaults to `logs`
+- `output_img_dir` - A path to the desired directory for saving output images. Defaults to `output_images`. Note that images are saved with random nonce in the name to avoid collisions without divulging any information from the host system.
 
 ## Execution
 Stable Discord may be started by running the following in the root directory of the repository:

@@ -1,7 +1,6 @@
 import logging
 import warnings
 from logging.handlers import TimedRotatingFileHandler
-import random
 from stable_discord.config import config
 
 
