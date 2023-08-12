@@ -30,3 +30,4 @@ enable_xformers_attention = true
 
 [misc_settings]
 log_dir="logs"
+output_img_dir="output_images"
